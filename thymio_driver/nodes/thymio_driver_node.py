@@ -110,7 +110,7 @@ class ThymioDriver():
 
 
                 self.sound_publisher=rospy.Publisher('sound',Float32,queue_size=1)
-                self.sound_threshold_publisher = rospy.Publisher('/aseba/events/set_sound_theshold', AsebaEvent,queue_size=1)
+                self.sound_threshold_publisher = rospy.Publisher('/aseba/events/set_sound_threshold', AsebaEvent,queue_size=1)
                 rospy.Subscriber('/aseba/events/sound',AsebaEvent,self.on_aseba_sound_event)
                 rospy.Subscriber('sound_threshold',Float32,self.on_sound_threshold)
                 
@@ -193,7 +193,7 @@ class ThymioDriver():
                 self.aseba_play_sound_publisher.publish(AsebaEvent(rospy.get_rostime(),0,[freq,duration]))
 
         def on_system_sound_play(self,msg):
-                self.play_system_soun(msg.sound)
+                self.play_system_sound(msg.sound)
 
         
 
