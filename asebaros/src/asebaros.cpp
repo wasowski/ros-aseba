@@ -1,6 +1,6 @@
 #include "asebaros.h"
 
-#include <aseba/compiler/compiler.h>
+#include <compiler/compiler.h>
 
 #include <ros/console.h>
 
@@ -430,7 +430,7 @@ bool AsebaROS::getVariableList(GetVariableList::Request& req, GetVariableList::R
 		if (userVarMapIt != userDefinedVariablesMap.end())
 		{
 			// yes, us it 
-			const Compiler::VariablesMap& variablesMap(userVarMapIt->second);
+			const VariablesMap& variablesMap(userVarMapIt->second);
 			transform(variablesMap.begin(), variablesMap.end(),
 					  back_inserter(res.variableList), ExtractNameVar());
 		}
@@ -565,8 +565,8 @@ bool AsebaROS::getNodePosFromNames(const string& nodeName, const string& variabl
 	const UserDefinedVariablesMap::const_iterator userVarMapIt(userDefinedVariablesMap.find(nodeName));
 	if (userVarMapIt != userDefinedVariablesMap.end())
 	{
-		const Compiler::VariablesMap& userVarMap(userVarMapIt->second);
-		const Compiler::VariablesMap::const_iterator userVarIt(userVarMap.find(widen(variableName)));
+		const VariablesMap& userVarMap(userVarMapIt->second);
+		const VariablesMap::const_iterator userVarIt(userVarMap.find(widen(variableName)));
 		if (userVarIt != userVarMap.end())
 		{
 			pos = userVarIt->second.first;

@@ -1,46 +1,87 @@
-cmake_minimum_required(VERSION 2.4.6)
-include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
+cmake_minimum_required(VERSION 2.8.3)
+project(asebaros)
 
-# Set the build type.  Options are:
-#  Coverage       : w/ debug symbols, w/o optimization, w/ code-coverage
-#  Debug          : w/ debug symbols, w/o optimization
-#  Release        : w/o debug symbols, w/ optimization
-#  RelWithDebInfo : w/ debug symbols, w/ optimization
-#  MinSizeRel     : w/o debug symbols, w/ optimization, stripped binaries
-#set(ROS_BUILD_TYPE RelWithDebInfo)
+find_package(catkin REQUIRED COMPONENTS
+	std_msgs
+	roscpp
+	aseba
+	message_generation
+)
 
-rosbuild_init()
-
-if (WIN32)
-	set(EXTRA_LIBS ${EXTRA_LIBS} winspool ws2_32 setupapi)
-else (WIN32)
-	if (APPLE)
-		find_library(COREFOUNDATION_LIBRARY CoreFoundation)
-		find_library(IOKIT_LIBRARY IOKit)
-		mark_as_advanced(COREFOUNDATION_LIBRARY)
-		mark_as_advanced(IOKIT_LIBRARY)
-		set(EXTRA_LIBS ${EXTRA_LIBS} ${COREFOUNDATION_LIBRARY} ${IOKIT_LIBRARY} ${EXTRA_LIBS})
-	else (APPLE)
-		find_path(UDEV_INCLUDE_DIR libudev.h)
-		find_library(UDEV_LIBS udev)
-		include_directories(${UDEV_INCLUDE_DIR})
-		set(EXTRA_LIBS ${EXTRA_LIBS} ${UDEV_LIBS} ${EXTRA_LIBS})
-	endif (APPLE)
-endif (WIN32)
-
-# libxml2
+## System dependencies are found with CMake's conventions
+find_package(Boost REQUIRED COMPONENTS thread)
 find_package(LibXml2 REQUIRED)
-include_directories(${LIBXML2_INCLUDE_DIR})
 
-#set the default path for built executables to the "bin" directory
-set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
-#set the default path for built libraries to the "lib" directory
-set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
+################################################
+## Declare ROS messages, services and actions ##
+################################################
 
-rosbuild_genmsg()
-rosbuild_gensrv()
+## Generate messages in the 'msg' folder
+add_message_files(
+  FILES
+  AsebaEvent.msg
+  AsebaAnonymousEvent.msg
+)
 
-rosbuild_add_boost_directories()
-rosbuild_add_executable(asebaros src/asebaros.cpp)
-rosbuild_link_boost(asebaros thread)
-target_link_libraries(asebaros asebacompiler asebacore ${LIBXML2_LIBRARIES} ${EXTRA_LIBS})
+## Generate services in the 'srv' folder
+add_service_files(
+  FILES
+  GetEventId.srv
+  GetEventName.srv
+  GetNodeId.srv
+  GetNodeList.srv
+  GetNodeName.srv
+  GetVariableList.srv
+  GetVariable.srv
+  LoadScripts.srv
+  SetVariable.srv
+)
+
+## Generate added messages and services with any dependencies listed here
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+)
+
+###################################
+## catkin specific configuration ##
+###################################
+
+catkin_package(
+  CATKIN_DEPENDS std_msgs roscpp aseba message_runtime
+  DEPENDS Boost LibXml2
+)
+
+###########
+## Build ##
+###########
+
+include_directories(
+  ${catkin_INCLUDE_DIRS}
+  ${LIBXML2_INCLUDE_DIR}
+  ${Boost_INCLUDE_DIRS}
+)
+
+add_executable(asebaros src/asebaros.cpp)
+target_link_libraries(asebaros ${catkin_LIBRARIES} ${LIBXML2_LIBRARIES} ${Boost_LIBRARIES})
+add_dependencies(asebaros asebaros_generate_messages_cpp)
+
+#############
+## Install ##
+#############
+
+# all install targets should use catkin DESTINATION variables
+# See http://ros.org/doc/api/catkin/html/adv_user_guide/variables.html
+
+## Mark executables and/or libraries for installation
+# install(TARGETS beginner_tutorials beginner_tutorials_node
+#   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+# )
+
+## Mark cpp header files for installation
+# install(DIRECTORY include/${PROJECT_NAME}/
+#   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+#   FILES_MATCHING PATTERN "*.h"
+#   PATTERN ".svn" EXCLUDE

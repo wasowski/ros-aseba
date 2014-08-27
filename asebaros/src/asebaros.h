@@ -5,8 +5,8 @@
 #include <boost/thread.hpp>
 #include <boost/thread/mutex.hpp>
 
-#include <aseba/msg/msg.h>
-#include <aseba/msg/descriptions-manager.h>
+#include <common/msg/msg.h>
+#include <common/msg/descriptions-manager.h>
 
 #include "ros/ros.h"
 #include "std_msgs/String.h"
@@ -73,7 +73,7 @@ class AsebaROS: public Aseba::DescriptionsManager
 {
 protected:
 	typedef std::map<std::string, unsigned> NodesNamesMap;
-	typedef std::map<std::string, Aseba::Compiler::VariablesMap> UserDefinedVariablesMap;
+	typedef std::map<std::string, Aseba::VariablesMap> UserDefinedVariablesMap;
 	class GetVariableQueryKey
 	{
 	public:
