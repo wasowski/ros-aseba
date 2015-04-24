@@ -44,23 +44,27 @@ class ThymioDriver():
 		load_script(script_filename)
 		
 		# subscribe to topics
-		rospy.Subscriber("cmd_vel", Twist, self.on_cmd_vel)
-		rospy.Subscriber('/aseba/events/odometry', AsebaEvent, self.on_aseba_odometry_event)
+
 		self.aseba_pub = rospy.Publisher('/aseba/events/set_speed', AsebaEvent,queue_size=1)
 		self.odom_pub = rospy.Publisher('odom',Odometry,queue_size=1)
 		self.odom_broadcaster = TransformBroadcaster()
+		rospy.Subscriber('/aseba/events/odometry', AsebaEvent, self.on_aseba_odometry_event)
+		rospy.Subscriber("cmd_vel", Twist, self.on_cmd_vel)
 
-                rospy.Subscriber("/aseba/events/buttons",AsebaEvent,self.on_aseba_buttons_event)
+
+
                 self.buttons=Joy()
                 self.buttons_pub=rospy.Publisher('buttons',Joy,queue_size=1)
-	
+                rospy.Subscriber("/aseba/events/buttons",AsebaEvent,self.on_aseba_buttons_event)	
+
+
                 
                 
                 for button in BUTTONS:
                         rospy.Subscriber('aseba/events/button_'+button,AsebaEvent,self.on_aseba_button_event(button))
         
 
-                rospy.Subscriber('/aseba/events/proximity',AsebaEvent,self.on_aseba_proximity_event)        
+
                 self.proximity_sensors=[{
                         'publisher':rospy.Publisher('proximity/'+name,Range,queue_size=1),
                         'msg':Range(header=rospy.Header(frame_id='proximity_'+name+"_link"),radiation_type=Range.INFRARED,field_of_view=0.3,min_range=0.0215,max_range=0.14)
@@ -68,6 +72,8 @@ class ThymioDriver():
 
                 self.proximityToLaserPublisher=rospy.Publisher('proximity/laser',LaserScan,queue_size=1)
                 self.proximityToLaser=LaserScan(header=rospy.Header(frame_id="base_link"),angle_min=-0.64,angle_max=0.64,angle_increment=0.32,time_increment=0,scan_time=0,range_min=0.0215+0.08,range_max=0.14+0.08)
+                rospy.Subscriber('/aseba/events/proximity',AsebaEvent,self.on_aseba_proximity_event)        
+
 
                 self.ground_sensors=[{
                         'publisher':rospy.Publisher('ground/'+name,Range,queue_size=1),
@@ -78,7 +84,7 @@ class ThymioDriver():
                 rospy.set_param("~ground_threshold",200)
                 
 
-                rospy.Subscriber('/aseba/events/accelerometer',AsebaEvent,self.on_aseba_accelerometer_event)
+
                 self.imu=Imu(header=rospy.Header(frame_id='base_link'))
                 # no orientation or angular velocity information
                 self.imu.orientation_covariance[0]=-1
@@ -89,31 +95,33 @@ class ThymioDriver():
                 self.imu.linear_acceleration_covariance[8]=0.07
 
                 self.imu_publisher=rospy.Publisher('imu',Imu,queue_size=1)
+                rospy.Subscriber('/aseba/events/accelerometer',AsebaEvent,self.on_aseba_accelerometer_event)
 
 
-                rospy.Subscriber('/aseba/events/tap',AsebaEvent,self.on_aseba_tap_event)
                 self.tap_publisher=rospy.Publisher('tap',Empty,queue_size=1)
+                rospy.Subscriber('/aseba/events/tap',AsebaEvent,self.on_aseba_tap_event)
 
 
-                rospy.Subscriber('/aseba/events/temperature',AsebaEvent,self.on_aseba_temperature_event)
                 self.temperature=Temperature(header=rospy.Header(frame_id='base_link'))
                 self.temperature.variance=0.01
                 self.temperature_publisher=rospy.Publisher('temperature',Temperature,queue_size=1)
+                rospy.Subscriber('/aseba/events/temperature',AsebaEvent,self.on_aseba_temperature_event)
 
-                rospy.Subscriber('/aseba/events/sound',AsebaEvent,self.on_aseba_sound_event)
-                rospy.Subscriber('sound_threshold',Float32,self.on_sound_threshold)
+
                 self.sound_publisher=rospy.Publisher('sound',Float32,queue_size=1)
                 self.sound_threshold_publisher = rospy.Publisher('/aseba/events/set_sound_theshold', AsebaEvent,queue_size=1)
-
+                rospy.Subscriber('/aseba/events/sound',AsebaEvent,self.on_aseba_sound_event)
+                rospy.Subscriber('sound_threshold',Float32,self.on_sound_threshold)
                 
-                rospy.Subscriber('/aseba/events/remote',AsebaEvent,self.on_aseba_remote_event)
+
                 self.remote_publisher=rospy.Publisher('remote',Int8,queue_size=1)
+                rospy.Subscriber('/aseba/events/remote',AsebaEvent,self.on_aseba_remote_event)
                        
-                rospy.Subscriber('/aseba/events/comm',AsebaEvent,self.on_aseba_comm_event)
+
                 rospy.Subscriber('comm/transmit',Int16,self.on_sound_threshold)
                 self.comm_publisher=rospy.Publisher('comm/receive',Int16,queue_size=1)
                 self.aseba_set_comm_publisher = rospy.Publisher('/aseba/events/set_comm', AsebaEvent,queue_size=1)
-
+                rospy.Subscriber('/aseba/events/comm',AsebaEvent,self.on_aseba_comm_event)
                 
                 #actuators
 
