@@ -5,6 +5,8 @@ from geometry_msgs.msg import Twist
 from std_msgs.msg import Int8,Float32
 from sensor_msgs.msg import Range
 
+from keyboard.msg import Key
+
 MAX_LINEAR_SPEED=0.15
 MAX_ANGULAR_SPEED=2
 
@@ -16,6 +18,8 @@ CENTER=37
 
 class RemoteToTwist(object):
 	def __init__(self):
+
+                rospy.Subscriber('keyboard/keydown',Key,self.on_keydown)
                 
 		rospy.Subscriber('/remote',Int8, self.on_remote)
 		rospy.Subscriber('/ground/left',Range, self.on_ground)
@@ -73,6 +77,20 @@ class RemoteToTwist(object):
                 if(msg.data==RIGHT):
                         self.y=self.y-0.1
                 if(msg.data==CENTER):
+                        self.x=0
+                        self.y=0
+
+	def on_keydown(self,msg):
+		tw = Twist()
+                if(msg.code==Key.KEY_UP):
+                        self.x=self.x+0.1
+                if(msg.data==key.KEY_DOWN):
+                        self.x=self.x-0.1
+                if(msg.data==Key.KEY_LEFT):
+                        self.y=self.y+0.1
+                if(msg.data==Key.KEY_RIGHT):
+                        self.y=self.y-0.1
+                if(msg.data==KEY.KEY_SPACE):
                         self.x=0
                         self.y=0
 
