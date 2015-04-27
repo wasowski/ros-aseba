@@ -3,6 +3,7 @@
 
 import rospy
 import roslib
+import std_srvs.srv
 from asebaros.msg import AsebaAnonymousEvent,AsebaEvent
 from asebaros.srv import LoadScripts,GetNodeList
 from geometry_msgs.msg import Quaternion,Twist
@@ -148,13 +149,44 @@ class ThymioDriver():
                 self.aseba_play_sound_publisher=rospy.Publisher('/aseba/events/play_sound', AsebaEvent,queue_size=1)
                 self.aseba_play_system_sound_publisher=rospy.Publisher('/aseba/events/play_system_sound', AsebaEvent,queue_size=1)
 
+                rospy.Subscriber('alarm',Bool,self.on_alarm)
+                self.alarm_timer=None
+
+
+                #tell ros that we are ready
+                rospy.Service('thymio_is_ready',std_srvs.srv.Empty, self.ready)
+
+
+        def ready(self,req):
+                return std_srvs.srv.Empty()
+
+
+
+
+        def play_system_sound(self,sound):
+                self.aseba_play_system_sound_publisher.publish(AsebaEvent(rospy.get_rostime(),0,[sound]))
+
+        def alarm_cb(self,evt):
+                self.play_system_sound(2)
+
+        def on_alarm(self,msg):
+                if msg.data and not self.alarm_timer:
+                        self.alarm_timer=rospy.Timer(rospy.Duration(3),self.alarm_cb)
+                if msg.data==False and self.alarm_timer:
+                        self.alarm_timer.shutdown()
+                        self.alarm_timer=None
+                
+
+
+
         def on_sound_play(self,msg):
                 freq=max(1,int(msg.frequency))
                 duration=max(1,int(msg.duration.to_sec()*60))
                 self.aseba_play_sound_publisher.publish(AsebaEvent(rospy.get_rostime(),0,[freq,duration]))
 
         def on_system_sound_play(self,msg):
-                self.aseba_play_system_sound_publisher.publish(AsebaEvent(rospy.get_rostime(),0,[msg.sound]))
+                self.play_system_soun(msg.sound)
+
         
 
 
