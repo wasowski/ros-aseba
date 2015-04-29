@@ -153,8 +153,16 @@ class ThymioDriver():
                 self.alarm_timer=None
 
 
+
+                rospy.Subscriber('shutdown',Empty,self.on_shutdown_msg)
+                self.aseba_shutdown_publisher=rospy.Publisher('/aseba/events/shutdown', AsebaEvent,queue_size=1)
+
                 #tell ros that we are ready
                 rospy.Service('thymio_is_ready',std_srvs.srv.Empty, self.ready)
+
+
+        def on_shutdown_msg(self,msg):
+                self.aseba_shutdown_publisher.publish(AsebaEvent(rospy.get_rostime(),0,[]))
 
 
         def ready(self,req):

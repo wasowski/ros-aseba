@@ -3,6 +3,7 @@
 
 
 <!--list of global events-->
+<event size="0" name="shutdown"/>
 <event size="2" name="set_speed"/>
 <event size="2" name="odometry"/>
 <event size="5" name="buttons"/>
@@ -36,7 +37,7 @@
 
 
 <!--show keywords state-->
-<keywords flag="true"/>
+<!--><keywords flag="true"/><-->
 
 
 <!--node thymio-II-->
@@ -285,6 +286,11 @@ else
 	
 	timer.period[0]=20
 end
+
+onevent shutdown
+call _poweroff()
+
+
 </node>
 
 
