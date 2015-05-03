@@ -39,24 +39,24 @@ class ThymioDriver():
 		self.odom = Odometry(header=rospy.Header(frame_id='odom'),child_frame_id='base_link')
 
 		# load script on the Thymio
-		rospy.wait_for_service('/aseba/load_script')
-		load_script = rospy.ServiceProxy('/aseba/load_script',LoadScripts)
+		rospy.wait_for_service('aseba/load_script')
+		load_script = rospy.ServiceProxy('aseba/load_script',LoadScripts)
 		script_filename = roslib.packages.get_pkg_dir('thymio_driver') + '/aseba/thymio_ros.aesl'
 		load_script(script_filename)
 		
 		# subscribe to topics
 
-		self.aseba_pub = rospy.Publisher('/aseba/events/set_speed', AsebaEvent,queue_size=1)
+		self.aseba_pub = rospy.Publisher('aseba/events/set_speed', AsebaEvent,queue_size=1)
 		self.odom_pub = rospy.Publisher('odom',Odometry,queue_size=1)
 		self.odom_broadcaster = TransformBroadcaster()
-		rospy.Subscriber('/aseba/events/odometry', AsebaEvent, self.on_aseba_odometry_event)
+		rospy.Subscriber('aseba/events/odometry', AsebaEvent, self.on_aseba_odometry_event)
 		rospy.Subscriber("cmd_vel", Twist, self.on_cmd_vel)
 
 
 
                 self.buttons=Joy()
                 self.buttons_pub=rospy.Publisher('buttons',Joy,queue_size=1)
-                rospy.Subscriber("/aseba/events/buttons",AsebaEvent,self.on_aseba_buttons_event)	
+                rospy.Subscriber("aseba/events/buttons",AsebaEvent,self.on_aseba_buttons_event)	
 
 
                 
@@ -73,7 +73,7 @@ class ThymioDriver():
 
                 self.proximityToLaserPublisher=rospy.Publisher('proximity/laser',LaserScan,queue_size=1)
                 self.proximityToLaser=LaserScan(header=rospy.Header(frame_id="base_link"),angle_min=-0.64,angle_max=0.64,angle_increment=0.32,time_increment=0,scan_time=0,range_min=0.0215+0.08,range_max=0.14+0.08)
-                rospy.Subscriber('/aseba/events/proximity',AsebaEvent,self.on_aseba_proximity_event)        
+                rospy.Subscriber('aseba/events/proximity',AsebaEvent,self.on_aseba_proximity_event)        
 
 
                 self.ground_sensors=[{
@@ -81,7 +81,7 @@ class ThymioDriver():
                         'msg':Range(header=rospy.Header(frame_id='ground_'+name+"_link"),radiation_type=Range.INFRARED,field_of_view=0.3,min_range=0.008,max_range=0.008)
                 } for name in GROUND_NAMES]
 
-                rospy.Subscriber('/aseba/events/ground',AsebaEvent,self.on_aseba_ground_event)      
+                rospy.Subscriber('aseba/events/ground',AsebaEvent,self.on_aseba_ground_event)      
                 rospy.set_param("~ground_threshold",200)
                 
 
@@ -96,33 +96,33 @@ class ThymioDriver():
                 self.imu.linear_acceleration_covariance[8]=0.07
 
                 self.imu_publisher=rospy.Publisher('imu',Imu,queue_size=1)
-                rospy.Subscriber('/aseba/events/accelerometer',AsebaEvent,self.on_aseba_accelerometer_event)
+                rospy.Subscriber('aseba/events/accelerometer',AsebaEvent,self.on_aseba_accelerometer_event)
 
 
                 self.tap_publisher=rospy.Publisher('tap',Empty,queue_size=1)
-                rospy.Subscriber('/aseba/events/tap',AsebaEvent,self.on_aseba_tap_event)
+                rospy.Subscriber('aseba/events/tap',AsebaEvent,self.on_aseba_tap_event)
 
 
                 self.temperature=Temperature(header=rospy.Header(frame_id='base_link'))
                 self.temperature.variance=0.01
                 self.temperature_publisher=rospy.Publisher('temperature',Temperature,queue_size=1)
-                rospy.Subscriber('/aseba/events/temperature',AsebaEvent,self.on_aseba_temperature_event)
+                rospy.Subscriber('aseba/events/temperature',AsebaEvent,self.on_aseba_temperature_event)
 
 
                 self.sound_publisher=rospy.Publisher('sound',Float32,queue_size=1)
-                self.sound_threshold_publisher = rospy.Publisher('/aseba/events/set_sound_threshold', AsebaEvent,queue_size=1)
-                rospy.Subscriber('/aseba/events/sound',AsebaEvent,self.on_aseba_sound_event)
+                self.sound_threshold_publisher = rospy.Publisher('aseba/events/set_sound_threshold', AsebaEvent,queue_size=1)
+                rospy.Subscriber('aseba/events/sound',AsebaEvent,self.on_aseba_sound_event)
                 rospy.Subscriber('sound_threshold',Float32,self.on_sound_threshold)
                 
 
                 self.remote_publisher=rospy.Publisher('remote',Int8,queue_size=1)
-                rospy.Subscriber('/aseba/events/remote',AsebaEvent,self.on_aseba_remote_event)
+                rospy.Subscriber('aseba/events/remote',AsebaEvent,self.on_aseba_remote_event)
                        
 
                 rospy.Subscriber('comm/transmit',Int16,self.on_sound_threshold)
                 self.comm_publisher=rospy.Publisher('comm/receive',Int16,queue_size=1)
-                self.aseba_set_comm_publisher = rospy.Publisher('/aseba/events/set_comm', AsebaEvent,queue_size=1)
-                rospy.Subscriber('/aseba/events/comm',AsebaEvent,self.on_aseba_comm_event)
+                self.aseba_set_comm_publisher = rospy.Publisher('aseba/events/set_comm', AsebaEvent,queue_size=1)
+                rospy.Subscriber('aseba/events/comm',AsebaEvent,self.on_aseba_comm_event)
                 
                 #actuators
 
@@ -131,12 +131,12 @@ class ThymioDriver():
 
 
                 rospy.Subscriber('led',Led,self.on_led)
-                self.aseba_led_publisher=rospy.Publisher('/aseba/events/set_led', AsebaEvent,queue_size=6)
+                self.aseba_led_publisher=rospy.Publisher('aseba/events/set_led', AsebaEvent,queue_size=6)
 
                 rospy.Subscriber('led/off',Empty,self.on_led_off)
 
                 rospy.Subscriber('led/gesture',LedGesture,self.on_led_gesture)
-                self.aseba_led_gesture_publisher=rospy.Publisher('/aseba/events/set_led_gesture', AsebaEvent,queue_size=6)
+                self.aseba_led_gesture_publisher=rospy.Publisher('aseba/events/set_led_gesture', AsebaEvent,queue_size=6)
                 rospy.Subscriber('led/gesture/circle',Float32,self.on_led_gesture_circle)
                 rospy.Subscriber('led/gesture/off',Empty,self.on_led_gesture_off)
                 rospy.Subscriber('led/gesture/blink',Float32,self.on_led_gesture_blink)
@@ -144,10 +144,10 @@ class ThymioDriver():
                 rospy.Subscriber('led/gesture/alive',Empty,self.on_led_gesture_alive)
                
                 rospy.Subscriber('sound/play',Sound,self.on_sound_play)
-                self.aseba_led_gesture_publisher=rospy.Publisher('/aseba/events/set_led_gesture', AsebaEvent,queue_size=6)
+                self.aseba_led_gesture_publisher=rospy.Publisher('aseba/events/set_led_gesture', AsebaEvent,queue_size=6)
                 rospy.Subscriber('sound/play/system',SystemSound,self.on_system_sound_play)
-                self.aseba_play_sound_publisher=rospy.Publisher('/aseba/events/play_sound', AsebaEvent,queue_size=1)
-                self.aseba_play_system_sound_publisher=rospy.Publisher('/aseba/events/play_system_sound', AsebaEvent,queue_size=1)
+                self.aseba_play_sound_publisher=rospy.Publisher('aseba/events/play_sound', AsebaEvent,queue_size=1)
+                self.aseba_play_system_sound_publisher=rospy.Publisher('aseba/events/play_system_sound', AsebaEvent,queue_size=1)
 
                 rospy.Subscriber('alarm',Bool,self.on_alarm)
                 self.alarm_timer=None
@@ -155,7 +155,7 @@ class ThymioDriver():
 
 
                 rospy.Subscriber('shutdown',Empty,self.on_shutdown_msg)
-                self.aseba_shutdown_publisher=rospy.Publisher('/aseba/events/shutdown', AsebaEvent,queue_size=1)
+                self.aseba_shutdown_publisher=rospy.Publisher('aseba/events/shutdown', AsebaEvent,queue_size=1)
 
                 #tell ros that we are ready
                 rospy.Service('thymio_is_ready',std_srvs.srv.Empty, self.ready)
@@ -241,7 +241,7 @@ class ThymioDriver():
 
            
         def on_body_led(self,name):
-                publisher=rospy.Publisher('/aseba/events/set_led_'+name,AsebaEvent,queue_size=1)
+                publisher=rospy.Publisher('aseba/events/set_led_'+name,AsebaEvent,queue_size=1)
                 def callback(msg):
                         r=int(msg.r*32)
                         g=int(msg.g*32)
