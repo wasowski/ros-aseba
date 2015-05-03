@@ -84,13 +84,13 @@ class RemoteToTwist(object):
 		tw = Twist()
                 if(msg.code==Key.KEY_UP):
                         self.x=self.x+0.1
-                if(msg.data==key.KEY_DOWN):
+                if(msg.code==Key.KEY_DOWN):
                         self.x=self.x-0.1
-                if(msg.data==Key.KEY_LEFT):
+                if(msg.code==Key.KEY_LEFT):
                         self.y=self.y+0.1
-                if(msg.data==Key.KEY_RIGHT):
+                if(msg.code==Key.KEY_RIGHT):
                         self.y=self.y-0.1
-                if(msg.data==KEY.KEY_SPACE):
+                if(msg.code==Key.KEY_SPACE):
                         self.x=0
                         self.y=0
 
