@@ -11,7 +11,7 @@ from sensor_msgs.msg import Joy,Range,LaserScan,Imu,Temperature
 from std_msgs.msg import Bool,Float32,Empty,Int8,Int16,ColorRGBA
 from nav_msgs.msg import Odometry
 from tf.broadcaster import TransformBroadcaster
-from thymio_driver.msg import Led,LedGesture,Sound,SystemSound
+from thymio_msgs.msg import Led,LedGesture,Sound,SystemSound
 from math import sin,cos,atan2,log
 import time
 
