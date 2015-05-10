@@ -4,8 +4,8 @@
 import rospy
 import roslib
 import std_srvs.srv
-from asebaros.msg import AsebaAnonymousEvent,AsebaEvent
-from asebaros.srv import LoadScripts,GetNodeList
+from asebaros_msgs.msg import AsebaAnonymousEvent,AsebaEvent
+from asebaros_msgs.srv import LoadScripts,GetNodeList
 from geometry_msgs.msg import Quaternion,Twist
 from sensor_msgs.msg import Joy,Range,LaserScan,Imu,Temperature
 from std_msgs.msg import Bool,Float32,Empty,Int8,Int16,ColorRGBA
@@ -38,12 +38,17 @@ class ThymioDriver():
 		self.then = rospy.Time.now()
 		self.odom = Odometry(header=rospy.Header(frame_id='odom'),child_frame_id='base_link')
 
+
+
 		# load script on the Thymio
 		rospy.wait_for_service('aseba/load_script')
+
+
 		load_script = rospy.ServiceProxy('aseba/load_script',LoadScripts)
 		script_filename = roslib.packages.get_pkg_dir('thymio_driver') + '/aseba/thymio_ros.aesl'
 		load_script(script_filename)
 		
+
 		# subscribe to topics
 
 		self.aseba_pub = rospy.Publisher('aseba/events/set_speed', AsebaEvent,queue_size=1)
@@ -382,8 +387,10 @@ class ThymioDriver():
 		self.odom.pose.pose.position.y = self.y
 		self.odom.pose.pose.position.z = 0
 		self.odom.pose.pose.orientation = quaternion
-		self.odom.twist.twist.linear.x = ds/dt
-		self.odom.twist.twist.angular.z = dth/dt
+
+                if(dt>0):
+                        self.odom.twist.twist.linear.x = ds/dt
+                        self.odom.twist.twist.angular.z = dth/dt
 
 		# publish odometry
 		self.odom_broadcaster.sendTransform((self.x,self.y,0),(quaternion.x,quaternion.y,quaternion.z,quaternion.w),self.then,"base_link","odom")

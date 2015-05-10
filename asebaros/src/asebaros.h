@@ -11,18 +11,18 @@
 #include "ros/ros.h"
 #include "std_msgs/String.h"
 
-#include "asebaros/LoadScripts.h"
-#include "asebaros/GetNodeList.h"
-#include "asebaros/GetNodeId.h"
-#include "asebaros/GetNodeName.h"
-#include "asebaros/GetVariableList.h"
-#include "asebaros/SetVariable.h"
-#include "asebaros/GetVariable.h"
-#include "asebaros/GetEventId.h"
-#include "asebaros/GetEventName.h"
+#include <asebaros_msgs/LoadScripts.h>
+#include <asebaros_msgs/GetNodeList.h>
+#include <asebaros_msgs/GetNodeId.h>
+#include <asebaros_msgs/GetNodeName.h>
+#include <asebaros_msgs/GetVariableList.h>
+#include <asebaros_msgs/SetVariable.h>
+#include <asebaros_msgs/GetVariable.h>
+#include <asebaros_msgs/GetEventId.h>
+#include <asebaros_msgs/GetEventName.h>
 
-#include "asebaros/AsebaEvent.h"
-#include "asebaros/AsebaAnonymousEvent.h"
+#include <asebaros_msgs/AsebaEvent.h>
+#include <asebaros_msgs/AsebaAnonymousEvent.h>
 
 #include <vector>
 
@@ -63,7 +63,7 @@ protected:
 	virtual void connectionClosed(Dashel::Stream *stream, bool abnormal);
 };
 
-using namespace asebaros;
+using namespace asebaros_msgs;
 
 typedef std::vector<ros::ServiceServer> ServiceServers;
 typedef std::vector<ros::Publisher> Publishers;

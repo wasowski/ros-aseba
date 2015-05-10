@@ -11,8 +11,7 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
-
-using namespace asebaros;
+using namespace asebaros_msgs;
 using namespace std;
 using namespace boost;
 using namespace Dashel;

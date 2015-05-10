@@ -13,7 +13,7 @@
 <event size="1" name="button_forward"/>
 <event size="1" name="button_right"/>
 <event size="7" name="proximity"/>
-<event size="2" name="ground_ambiant"/>
+<event size="2" name="ground_ambient"/>
 <event size="2" name="ground_reflected"/>
 <event size="2" name="ground"/>
 <event size="3" name="accelerometer"/>
@@ -116,7 +116,7 @@ onevent prox
 emit proximity prox.horizontal
 emit ground prox.ground.delta
 emit ground_reflected prox.ground.reflected
-emit ground_ambiant prox.ground.ambiant
+emit ground_ambient prox.ground.ambiant
 
 # IMU
 
