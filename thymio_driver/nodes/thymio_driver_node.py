@@ -370,7 +370,7 @@ class ThymioDriver():
 		dsl = (data.data[0]*dt)/SPEED_COEF # left wheel delta in mm
 		dsr = (data.data[1]*dt)/SPEED_COEF # right wheel delta in mm
 		ds = ((dsl+dsr)/2.0)/1000.0      # robot traveled distance in meters
-		dth = atan2(dsr-dsl,BASE_WIDTH)  # turn angle
+		dth = (dsr-dsl)/BASE_WIDTH  # turn angle
 
 		self.x += ds*cos(self.th+dth/2.0)
 		self.y += ds*sin(self.th+dth/2.0)
