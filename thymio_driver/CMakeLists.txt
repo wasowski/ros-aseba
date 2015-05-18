@@ -28,7 +28,7 @@ find_package(catkin REQUIRED COMPONENTS
 ###################################
 
 catkin_package(
-  CATKIN_DEPENDS rospy asebaros asebaros_msgs std_msgs geometry_msgs tf sensor_msgs nav_msgs message_runtime thymio_msgs
+  CATKIN_DEPENDS rospy asebaros_msgs std_msgs geometry_msgs tf sensor_msgs nav_msgs message_runtime thymio_msgs
 )
 
 ###########
