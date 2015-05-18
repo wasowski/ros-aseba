@@ -3,7 +3,6 @@ project(thymio_driver)
 
 find_package(catkin REQUIRED COMPONENTS
 	rospy
-	asebaros
 	asebaros_msgs
 	std_msgs
 	geometry_msgs
@@ -40,4 +39,3 @@ catkin_package(
 #############
 ## Install ##
 #############
-
