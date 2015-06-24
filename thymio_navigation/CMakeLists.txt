@@ -5,11 +5,12 @@ project(thymio_navigation)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  joy
+  #joy
   roscpp
   rospy
   std_msgs
   thymio_driver
+  sensor_msgs
   keyboard
 )
 
