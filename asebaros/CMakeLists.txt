@@ -54,7 +54,7 @@ include_directories(
 
 add_executable(asebaros src/asebaros.cpp)
 target_link_libraries(asebaros ${catkin_LIBRARIES} ${LIBXML2_LIBRARIES} ${Boost_LIBRARIES})
-add_dependencies(asebaros asebaros_generate_messages_cpp)
+add_dependencies(asebaros asebaros_msgs_generate_messages_cpp)
 
 #############
 ## Install ##
