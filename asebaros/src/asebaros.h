@@ -6,7 +6,7 @@
 #include <boost/thread/mutex.hpp>
 
 #include <common/msg/msg.h>
-#include <common/msg/descriptions-manager.h>
+#include <common/msg/NodesManager.h>
 
 #include "ros/ros.h"
 #include "std_msgs/String.h"
@@ -29,6 +29,8 @@
 
 class AsebaROS;
 
+using namespace Aseba;
+
 class AsebaDashelHub: public Dashel::Hub
 {
 private:
@@ -48,7 +50,7 @@ public:
 		@param message aseba message to send
 		@param sourceStream originate of the message, if from Dashel.
 	*/
-	void sendMessage(Aseba::Message *message, bool doLock, Dashel::Stream* sourceStream = 0);
+	void sendMessage(const Aseba::Message *message, bool doLock, Dashel::Stream* sourceStream = 0);
 
 	//! run the hub
 	void operator()();
@@ -69,7 +71,7 @@ typedef std::vector<ros::ServiceServer> ServiceServers;
 typedef std::vector<ros::Publisher> Publishers;
 typedef std::vector<ros::Subscriber> Subscribers;
 
-class AsebaROS: public Aseba::DescriptionsManager
+class AsebaROS: public Aseba::NodesManager
 {
 protected:
 	typedef std::map<std::string, unsigned> NodesNamesMap;
@@ -128,6 +130,7 @@ protected:
 	void sendEventOnROS(const Aseba::UserMessage* asebaMessage);
 	
 	// callbacks
+	virtual void sendMessage(const Message& message);
 	void nodeDescriptionReceived(unsigned nodeId);
 	void eventReceived(const AsebaAnonymousEventConstPtr& event);
 	void knownEventReceived(const uint16 id, const AsebaEventConstPtr& event);

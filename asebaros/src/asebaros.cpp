@@ -56,14 +56,14 @@ AsebaDashelHub::AsebaDashelHub(AsebaROS* asebaROS, unsigned port, bool forward):
 	Dashel::Hub::connect(oss.str());
 }
 
-static wstring asebaMsgToString(Message *message)
+static wstring asebaMsgToString(const Message *message)
 {
 	wostringstream oss;
 	message->dump(oss);
 	return oss.str();
 }
 
-void AsebaDashelHub::sendMessage(Message *message, bool doLock, Stream* sourceStream)
+void AsebaDashelHub::sendMessage(const Message *message, bool doLock, Stream* sourceStream)
 {
 	// dump if requested
 	// TODO: put a request for unicode version of ROS debug
@@ -225,7 +225,7 @@ bool AsebaROS::loadScript(LoadScripts::Request& req, LoadScripts::Response& res)
 							preferedId = unsigned(atoi((char*)storedId));
 						mutex.lock();
 						bool ok;
-						unsigned nodeId(DescriptionsManager::getNodeId(widen(_name), preferedId, &ok));
+						unsigned nodeId(NodesManager::getNodeId(widen(_name), preferedId, &ok));
 						mutex.unlock();
 						if (ok)
 						{
@@ -394,8 +394,8 @@ bool AsebaROS::getNodeName(GetNodeName::Request& req, GetNodeName::Response& res
 {
 	lock_guard<boost::mutex> lock(mutex);
 	
-	NodesDescriptionsMap::const_iterator nodeIt(nodesDescriptions.find(req.nodeId));
-	if (nodeIt != nodesDescriptions.end())
+	NodesMap::const_iterator nodeIt(nodes.find(req.nodeId));
+	if (nodeIt != nodes.end())
 	{
 		res.nodeName = narrow(nodeIt->second.name);
 		return true;
@@ -437,8 +437,8 @@ bool AsebaROS::getVariableList(GetVariableList::Request& req, GetVariableList::R
 		{
 			// no, then only show node-defined variables
 			const unsigned nodeId(nodeIt->second);
-			const NodesDescriptionsMap::const_iterator descIt(nodesDescriptions.find(nodeId));
-			const NodeDescription& description(descIt->second);
+			const NodesMap::const_iterator descIt(nodes.find(nodeId));
+			const Node& description(descIt->second);
 			transform(description.namedVariables.begin(), description.namedVariables.end(),
 					  back_inserter(res.variableList), ExtractNameDesc());
 		}
@@ -614,7 +614,7 @@ void AsebaROS::sendEventOnROS(const UserMessage* asebaMessage)
 void AsebaROS::nodeDescriptionReceived(unsigned nodeId)
 {
 	// does not need locking, called by parent object
-	nodesNames[narrow(nodesDescriptions.at(nodeId).name)] = nodeId;
+	nodesNames[narrow(nodes.at(nodeId).name)] = nodeId;
 }
 
 void AsebaROS::eventReceived(const AsebaAnonymousEventConstPtr& event)
@@ -639,6 +639,12 @@ void AsebaROS::knownEventReceived(const uint16 id, const AsebaEventConstPtr& eve
 	}
 }
 
+void AsebaROS::sendMessage(const Message& message)
+{
+	// not sure if use true or false (to lock or not to lock)
+	hub.sendMessage(&message, true);
+}
+	
 AsebaROS::AsebaROS(unsigned port, bool forward):
 	n("aseba"),
 	anonPub(n.advertise<AsebaAnonymousEvent>("anonymous_events", 100)),
@@ -686,7 +692,7 @@ void AsebaROS::processAsebaMessage(Message *message)
 	lock_guard<boost::mutex> lock(mutex);
 	
 	// scan this message for nodes descriptions
-	DescriptionsManager::processMessage(message);
+	NodesManager::processMessage(message);
 	
 	// if user message, send to D-Bus as well
 	UserMessage *userMessage = dynamic_cast<UserMessage *>(message);
