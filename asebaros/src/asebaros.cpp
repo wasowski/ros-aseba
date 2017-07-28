@@ -10,6 +10,7 @@
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>
+#include "transport/dashel_plugins/dashel-plugins.h"
 
 using namespace asebaros_msgs;
 using namespace std;
@@ -119,7 +120,7 @@ void AsebaDashelHub::stopThread()
 
 // the following method run in the blocking reception thread
 	
-void AsebaDashelHub::incomingData(Stream *stream)
+void AsebaDashelHub::incomingData(Dashel::Stream *stream)
 {
 	// receive message
 	Message *message = 0;
@@ -130,12 +131,12 @@ void AsebaDashelHub::incomingData(Stream *stream)
 	catch (DashelException e)
 	{
 		// if this stream has a problem, ignore it for now, and let Hub call connectionClosed later.
-		ROS_ERROR("error while writing message");
+		ROS_ERROR("error while writing message %s \n", e.what() );
 	}
-	
+
 	// send message to Dashel peers
 	sendMessage(message, false, stream);
-	
+
 	// process message for ROS peers, the receiver will delete it
 	asebaROS->processAsebaMessage(message);
 	
@@ -642,7 +643,7 @@ void AsebaROS::knownEventReceived(const uint16 id, const AsebaEventConstPtr& eve
 void AsebaROS::sendMessage(const Message& message)
 {
 	// not sure if use true or false (to lock or not to lock)
-	hub.sendMessage(&message, true);
+	hub.sendMessage(&message, false);
 }
 	
 AsebaROS::AsebaROS(unsigned port, bool forward):
@@ -677,12 +678,19 @@ AsebaROS::~AsebaROS()
 	xmlCleanupParser();
 }
 
+void AsebaROS::pingCallback (const ros::TimerEvent&)
+{
+  pingNetwork();
+}
+
 void AsebaROS::run()
 {
 	// does not need locking, called by main
 	hub.startThread();
+
+  ros::Timer timer = n.createTimer(ros::Duration(1), &AsebaROS::pingCallback, this);
+
 	ros::spin();
-	//cerr << "ros returned" << endl;
 	hub.stopThread();
 }
 
@@ -693,7 +701,7 @@ void AsebaROS::processAsebaMessage(Message *message)
 	
 	// scan this message for nodes descriptions
 	NodesManager::processMessage(message);
-	
+
 	// if user message, send to D-Bus as well
 	UserMessage *userMessage = dynamic_cast<UserMessage *>(message);
 	if (userMessage)
@@ -762,6 +770,8 @@ int main(int argc, char *argv[])
 		}
 		argCounter++;
 	}
+		
+	Dashel::initPlugins();
 	
 	AsebaROS asebaROS(port, forward);
 	

@@ -46,6 +46,7 @@ class ThymioDriver():
 
 		load_script = rospy.ServiceProxy('aseba/load_script',LoadScripts)
 		script_filename = roslib.packages.get_pkg_dir('thymio_driver') + '/aseba/thymio_ros.aesl'
+                rospy.sleep(6.)
 		load_script(script_filename)
 		
 

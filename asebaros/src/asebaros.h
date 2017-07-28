@@ -63,6 +63,7 @@ protected:
 	virtual void connectionCreated(Dashel::Stream *stream);
 	virtual void incomingData(Dashel::Stream *stream);
 	virtual void connectionClosed(Dashel::Stream *stream, bool abnormal);
+
 };
 
 using namespace asebaros_msgs;
@@ -134,6 +135,8 @@ protected:
 	void nodeDescriptionReceived(unsigned nodeId);
 	void eventReceived(const AsebaAnonymousEventConstPtr& event);
 	void knownEventReceived(const uint16 id, const AsebaEventConstPtr& event);
+
+  virtual void pingCallback (const ros::TimerEvent&);
 	
 public:
 	AsebaROS(unsigned port, bool forward);
