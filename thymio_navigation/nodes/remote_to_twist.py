@@ -7,8 +7,8 @@ from sensor_msgs.msg import Range
 
 from keyboard.msg import Key
 
-MAX_LINEAR_SPEED=0.15
-MAX_ANGULAR_SPEED=2
+MAX_LINEAR_SPEED=150
+MAX_ANGULAR_SPEED=200
 
 UP=32
 DOWN=33
@@ -83,13 +83,13 @@ class RemoteToTwist(object):
 	def on_keydown(self,msg):
 		tw = Twist()
                 if(msg.code==Key.KEY_UP):
-                        self.x=self.x+0.1
+                        self.x=self.x+0.15
                 if(msg.code==Key.KEY_DOWN):
-                        self.x=self.x-0.1
+                        self.x=self.x-0.15
                 if(msg.code==Key.KEY_LEFT):
-                        self.y=self.y+0.1
+                        self.y=self.y+0.15
                 if(msg.code==Key.KEY_RIGHT):
-                        self.y=self.y-0.1
+                        self.y=self.y-0.15
                 if(msg.code==Key.KEY_SPACE):
                         self.x=0
                         self.y=0
