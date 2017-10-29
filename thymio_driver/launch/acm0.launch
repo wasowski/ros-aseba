@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<launch>
+  <param name="robot_description" command="$(find xacro)/xacro.py '$(find thymio_driver)/models/thymio.urdf.xacro'" />
+
+    <!-->Thymio has no published joints (the wheels position are not published)<-->
+  <node pkg="robot_state_publisher" type="robot_state_publisher" name="rob_st_pub" />
+  <node pkg="asebaros" type="asebaros" name="asebaros" output="screen" args="ser:device=/dev/ttyACM0"/>
+  <node name="thymio" pkg="thymio_driver" type="thymio_driver_node.py" output="screen" />
+</launch>
+
