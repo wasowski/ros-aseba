@@ -4,10 +4,17 @@ For compilation instructions, see the README.md in the `asebaros` directory.
 [Aseba]: http://aseba.wikidot.com
 [ROS]: http://www.ros.org
 
+Prerequisites 
+=============
+* You need Ubuntu or Windows with WSL (native Ubuntu works much better)
+
+
 Build Instructions
 ==================
 
-* Install ROS (this fork is tested with kinetic)
+* Install ROS (this fork is tested with kinetic, but we are now trying to move it to melodic)
+  * for Ubuntu: http://wiki.ros.org/kinetic/Installation/Ubuntu
+  * for WSL: https://janbernloehr.de/2017/06/10/ros-windows (this is melodic, work in progress)
 * Create a catkin workspace 
 * git clone --recursive this repo into src/
 * possibly also git submodules update --init --recursive
